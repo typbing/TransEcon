@@ -7,4 +7,3 @@ DEM                     New York State GIS Resource                 raster     t
 Land Use                Office of Technology and Innovation (OTI)   raster     tif                 6-in resolution https://data.cityofnewyork.us/Environment/Land-Cover-Raster-Data-2017-6in-Resolution/he6d-2qns/about_data
 Property Values         Department of Finance (DOF)                 file database format mdb       n/a             https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data/yjxr-fw8i/about_data
 Business licenses       Department of Small Business Services (SBS) csv        n/a                 n/a             https://data.cityofnewyork.us/Business/SBS-Certified-Business-List/ci93-uc8s/about_data
-Zoning?(still thingking)
