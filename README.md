@@ -31,3 +31,22 @@ Binghui li
 | Property Values    | Department of Finance (DOF)             | File Database Format | MDB | N/A            | [NYC Open Data - Property Valuation and Assessment Data](https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data/yjxr-fw8i/about_data) |
 | Business Licenses  | Department of Small Business Services (SBS) | CSV    | N/A    | N/A               | [NYC Open Data - SBS Certified Business List](https://data.cityofnewyork.us/Business/SBS-Certified-Business-List/ci93-uc8s/about_data) |
 
+
+## Data Normalization
+
+### Airport
+- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
+
+```
+ALTER TABLE airport
+  DROP COLUMN operatorty,
+  DROP COLUMN emergency,
+  DROP COLUMN addrfull,
+  DROP COLUMN capacitype,
+  DROP COLUMN addrcity,
+  DROP COLUMN osm_id,
+  DROP COLUMN source,
+  DROP COLUMN building,
+  DROP COLUMN emergencyh;
+```
+
