@@ -104,3 +104,23 @@ ALTER TABLE bus_stops
 
 ### Final bus stops table:
 ![alt text](pic/bus_stop1.png)
+
+### Subway route
+- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
+```
+ALTER TABLE subway_route
+
+  DROP COLUMN shape_id,
+-- Include all other columns
+```
+
+### Initial Subway route table:
+![alt text](pic/subway_route.png)
+
+### Final Subway route table:
+![alt text](pic/subway_route1.png)
+
+### Subway stops (same steps above )
+
+### Final Subway stops table:
+![alt text](pic/subway_stop1.png)
