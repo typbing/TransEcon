@@ -50,3 +50,57 @@ ALTER TABLE airport
   DROP COLUMN emergencyh;
 ```
 
+### Initial airport table:
+![alt text](pic/airport.png)
+
+### Final airport table:
+![alt text](pic/airport1.png)
+
+
+### Road
+- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
+  
+```
+ALTER TABLE ny_road
+  DROP COLUMN datemodifi,
+  DROP COLUMN nysstreeti,
+-- Include all other columns
+```
+
+### Final road table:
+![alt text](pic/road.png)
+
+
+### Bus route
+
+- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
+```
+ALTER TABLE bus_route
+
+  DROP COLUMN shape_leng,
+  DROP COLUMN shape_id;
+```
+
+### Initial bus route table:
+![alt text](pic/bus_route.png)
+
+
+### Final bus route table:
+![alt text](pic/busroute1.png)
+
+### Bus stops
+- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
+
+```
+ALTER TABLE bus_stops
+  DROP COLUMN shape_id,
+  DROP COLUMN sequence,
+  DROP COLUMN stop_id,
+-- Include all other columns
+```
+
+### Initial bus stop table:
+![alt text](pic/bus_stop.png)
+
+### Final bus stops table:
+![alt text](pic/bus_stop1.png)
