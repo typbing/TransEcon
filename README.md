@@ -11,6 +11,12 @@ Binghui li
 - Are the economic benefits of transportation infrastructure equitably distributed across different demographic groups?
 - Does the development of transportation infrastructure correlate with changes in employment rates in surrounding areas?
 
+## General Data Processing
+
+- All spatial data was reprojected to EPS:2263
+  
+- Convert GTFS data:first import the GTFS stops.txt and shapes.txt files into ArcGIS. Convert stop coordinates to point shapefiles and transform route coordinates from shapes.txt into line shapefiles, using tools "XY Table to Point" and "Points to Line", respectively. 
+
 ### Data
 
 | Name               | Source                                   | Data Type | Format | Resolution       | Link                                                                        |
