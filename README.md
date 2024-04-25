@@ -203,3 +203,88 @@ ALTER TABLE subway_route
 
 ### Final Subway stops table:
 ![alt text](pic/subway_stop1.png)
+
+
+--
+# Analysis
+## 1. Influence of Transportation Access on Property Values
+The SQL query is designed to determine the influence of transportation access on property values by comparing the average property values within a 500-meter radius of subway and bus stops. 
+
+### SQL Query
+
+The first part calculates the average property value and the total number of properties within 500 meters of subway stops, while the second part does the same for bus stops. 
+
+```sql
+-- Subway access influence
+SELECT 
+    AVG(p.user_fullv) AS avg_property_value,
+    COUNT(*) AS num_properties,
+    'Subway Access' AS transport_access_type
+FROM 
+    propery_val p
+JOIN 
+    subway_stops s ON ST_DWithin(p.geom, s.geom, 500)
+GROUP BY 
+    transport_access_type
+UNION ALL
+-- Bus access influence
+SELECT 
+    AVG(p.user_fullv) AS avg_property_value,
+    COUNT(*) AS num_properties,
+    'Bus Access' AS transport_access_type
+FROM 
+    propery_val p
+JOIN 
+    bus_stops b ON ST_DWithin(p.geom, b.geom, 500)
+GROUP BY 
+    transport_access_type;
+```
+
+### Query Results
+- **Subway Access**:
+  - Average Property Value: $2,898,814.35
+  - Number of Properties: 863,048
+
+- **Bus Access**:
+  - Average Property Value: $2,511,570.85
+  - Number of Properties: 1,205,611
+
+### Analysis
+
+The query results suggest that properties within close proximity to subway stops have a higher average value compared to those near bus stops. 
+
+
+# Analysis of Property Values to Subway Stops
+
+## Overview
+
+Analyze the correlation between property values and their proximity to subway stops. 
+## SQL Query
+
+Calculates the average property value within different distance thresholds from subway stops:
+
+```sql
+SELECT AVG(p.user_fullv) AS average_property_value
+FROM propery_val p
+JOIN subway_stops s ON ST_DWithin(p.geom, s.geom, <distance>)
+WHERE p.user_fullv IS NOT NULL;
+```
+
+The `<distance>` placeholder is replaced with the specific distance thresholds (500m, 1000m, 1500m, and 2000m) to execute the query multiple times, each time analyzing a different  to subway stops.
+
+## Results
+
+The average property values at different distances from subway stops are reported as follows:
+
+- **500 meters**: $2,898,814.35
+- **1000 meters**: $2,585,224.54
+- **1500 meters**: $2,387,841.68
+- **2000 meters**: $2,325,656.41
+
+These values represent the average property value within the respective distances from subway stops, indicating a trend where proximity appears to correlate with higher property value.
+
+
+## Analysis 
+
+The analysis suggests a pattern where average property values tend to be higher closer to subway stops. 
+
