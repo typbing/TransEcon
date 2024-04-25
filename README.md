@@ -27,7 +27,22 @@ This project utilizes a variety of datasets sourced from public and governmental
 | Zoning        | Department of Finance (DOF)                 | File Database Format | Shapefile  | N/A            | [NYC Open Data - Zoning  Data](https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd) |
 | Property Values        | Department of Finance (DOF)                 | File Database Format | MDB  | N/A            | [NYC Open Data - Property Valuation and Assessment Data](https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data/yjxr-fw8i/about_data) |
 
+## Data Processing
 
+### Converting GTFS Data to Shapefiles in ArcGIS Pro
+
+### **Step 1: Import GTFS Data**
+- **Files:** Import `stops.txt` and `shapes.txt` from your GTFS dataset into ArcGIS Pro.
+
+### **Step 2: Convert Stop Coordinates**
+- **Tool:** Use **XY Table to Point**.
+- **Input:** Select `stops.txt`.
+- **Fields:** Assign longitude to **X Field** and latitude to **Y Field**.
+
+### **Step 3: Create Route Shapefiles**
+- **Tool:** Use **Points to Line**.
+- **Input:** Use the point shapefile derived from `shapes.txt`.
+- **Line Field:** Use `shape_id` to group points into lines.
 
 ## General Data Processing
 
