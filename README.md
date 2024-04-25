@@ -288,3 +288,44 @@ These values represent the average property value within the respective distance
 
 The analysis suggests a pattern where average property values tend to be higher closer to subway stops. 
 
+
+
+# 2. Analysis of  transportation infrastructure are equitably distributed
+
+## Overview
+
+To analyze whether the economic benefits of transportation infrastructure are equitably distributed across different demographic groups, compare access to transportation against various demographic indicators that might reflect economic benefits.
+
+
+## SQL Query
+```sql
+SELECT 
+    ct.gid AS census_tract_id,
+    ct.p0010001 AS total_population,
+    ct.p0120002 AS male_population,
+    ct.p0120026 AS female_population,
+    ct.p012_calc_ AS population_under_18,
+    ct.p012_calc1 AS population_65_and_over,
+    ct.p012_cal_1 AS population_18_to_64,
+    AVG(pv.user_fullv) AS avg_property_value,
+    COUNT(DISTINCT ss.stop_id) AS num_subway_stops,
+    COUNT(DISTINCT bs.stop_id) AS num_bus_stops
+FROM 
+    census_tract ct
+LEFT JOIN 
+    propery_val pv ON ST_Contains(ct.geom, pv.geom)
+LEFT JOIN 
+    subway_stops ss ON ST_DWithin(ct.geom, ss.geom, 500)
+LEFT JOIN 
+    bus_stops bs ON ST_DWithin(ct.geom, bs.geom, 500)
+GROUP BY 
+    ct.gid, ct.p0010001, ct.p0120002, ct.p0120026, ct.p012_calc_, ct.p012_calc1, ct.p012_cal_1;
+```
+
+
+## Results
+| census_tract_id | total_population | male_population | female_population | population_under_18 | population_65_and_over | population_18_to_64 | avg_property_value | num_subway_stops | num_bus_stops |
+|-----------------|------------------|-----------------|-------------------|---------------------|------------------------|---------------------|--------------------|------------------|---------------|
+| 1               | 2163             | 1030            | 1133              | 425                 | 237                    | 773                 | 458561.28          | 0                | 0             |
+| 2               | 1395             | 712             | 683               | 321                 | 237                    | 558                 | 1054500.00         | 2                | 0             |
+| ...             | ...              | ...             | ...               | ...                 | ...                    | ...                 | ...                | ...              | ...           |
