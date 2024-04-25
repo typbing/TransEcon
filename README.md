@@ -26,6 +26,7 @@ This project utilizes a variety of datasets sourced from public and governmental
 | Land Use               | Esri Sentinel-2 Land Cover  | Raster    | TIF              | 10 m| [Sentinel-2 Land Cover](https://livingatlas.arcgis.com/landcoverexplorer/#mapCenter=-77.08371%2C26.38100%2C11&mode=step&timeExtent=2017%2C2023&year=2023)           |
 | Zoning        | Department of Finance (DOF)                 | File Database Format | Shapefile  | N/A            | [NYC Open Data - Zoning  Data](https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd) |
 | Property Values        | Department of Finance (DOF)                 | File Database Format | MDB  | N/A            | [NYC Open Data - Property Valuation and Assessment Data](https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data/yjxr-fw8i/about_data) |
+| Demographic            | United States Census Bureau                 | Vector   | Shapefile        | N/A            | [Census Bureau](https://www.census.gov/data/tables/2023/dec/2020-census-dhc.html)       |
 
 ## Data Processing
 
@@ -69,7 +70,7 @@ This project utilizes a variety of datasets sourced from public and governmental
 
 - All spatial data was reprojected to EPS:2263
   
-- Convert GTFS data:first import the GTFS stops.txt and shapes.txt files into ArcGIS. Convert stop coordinates to point shapefiles and transform route coordinates from shapes.txt into line shapefiles, using tools "XY Table to Point" and "Points to Line", respectively.
+
 - Data was clipped to New York City
 
 
