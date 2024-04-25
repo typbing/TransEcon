@@ -329,3 +329,55 @@ GROUP BY
 | 1               | 2163             | 1030            | 1133              | 425                 | 237                    | 773                 | 458561.28          | 0                | 0             |
 | 2               | 1395             | 712             | 683               | 321                 | 237                    | 558                 | 1054500.00         | 2                | 0             |
 | ...             | ...              | ...             | ...               | ...                 | ...                    | ...                 | ...                | ...              | ...           |
+
+
+
+# 3. Does the development of transportation infrastructure correlate with changes in employment rates in surrounding areas?
+
+## Overview
+
+Use the presence and density of commercial properties within census tracts as a proxy for employment rates. Assumes that areas with a higher density of commercial properties likely have higher employment rates.
+
+Analyze demographic distributions in relation to transportation access, potentially identifying if certain groups (like working-age individuals or seniors) are more likely to live in areas with better public transportation.
+
+
+## SQL Query
+```sql
+SELECT 
+    ct.gid AS census_tract_id,
+    ct.p0010001 AS total_population,  -- Total population in the census tract
+    -- Assuming these column names are for the specific age demographics
+    ct.p012_calc_ AS population_under_18,  
+    ct.p012_calc1 AS population_65_and_over,  
+    ct.p012_cal_1 AS population_18_to_64,
+    AVG(pv.user_fullv) AS avg_property_value,  -- Average property value in the census tract
+    COUNT(DISTINCT ss.stop_id) AS num_subway_stops,  -- Number of subway stops within 500 meters
+    COUNT(DISTINCT bs.stop_id) AS num_bus_stops  -- Number of bus stops within 500 meters
+FROM 
+    census_tract ct
+LEFT JOIN 
+    propery_val pv ON ST_Contains(ct.geom, pv.geom)
+LEFT JOIN 
+    zoning z ON ST_Contains(z.geom, pv.geom) AND z.zone_gen LIKE 'C%'
+LEFT JOIN 
+    subway_stops ss ON ST_DWithin(ct.geom, ss.geom, 500)
+LEFT JOIN 
+    bus_stops bs ON ST_DWithin(ct.geom, bs.geom, 500)
+GROUP BY 
+    ct.gid, ct.p0010001, ct.p012_calc_, ct.p012_calc1, ct.p012_cal_1
+ORDER BY 
+    avg_property_value DESC, num_subway_stops DESC, num_bus_stops DESC;
+
+```
+
+
+## Results
+| census_tract_id | total_population | population_under_18 | population_65_and_over | population_18_to_64 | avg_property_value | num_subway_stops | num_bus_stops |
+|-----------------|------------------|---------------------|------------------------|---------------------|--------------------|------------------|---------------|
+| 1698            | 2214             | 138                 | 37                     | 175                 | NULL               | 10               | 0             |
+| 2315            | 8645             | 561                 | 98                     | 659                 | NULL               | 10               | 0             |
+| 1975            | 1434             | 180                 | 65                     | 245                 | NULL               | 10               | 0             |
+| 2200            | 4399             | 248                 | 78                     | 326                 | NULL               | 8                | 0             |
+| 2297            | 4932             | 1011                | 372                    | 1383                | NULL               | 8                | 0             |
+| 1359            | 4260             | 559                 | 333                    | 892                 | NULL               | 8                | 0             |
+| ...             | ...              | ...                 | ...                    | ...                 | ...                | ...              | ...           |
