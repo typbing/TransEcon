@@ -44,6 +44,27 @@ This project utilizes a variety of datasets sourced from public and governmental
 - **Input:** Use the point shapefile derived from `shapes.txt`.
 - **Line Field:** Use `shape_id` to group points into lines.
 
+### **Convert MDB to CSV on Mac**
+1. **Conversion Tool**: Since Microsoft Access is not available on macOS, use a third-party tool.
+   - (https://www.rebasedata.com/convert-mdb-to-csv-online)
+2. **Export to CSV**: Choose CSV as the export format 
+
+### **Convert CSV to Geospatial Data in ArcGIS Pro**
+1. **Import CSV into ArcGIS Pro**:
+   - “Add Data” and select  CSV file to import it into the project.
+2. **Geocode CSV File**:
+   - Navigate to the **Geocoding Tools** 
+   - Select “Geocode Addresses” which is detailed on the [Geocode Addresses](https://pro.arcgis.com/en/pro-app/latest/tool-reference/geocoding/geocode-addresses.htm) page.
+   - In the **Geocode Addresses** tool:
+     - For the **Input Table**, select your imported CSV file.
+     - Set the **Address Locator** to the address locator appropriate for the location data
+     - Specify the fields in your CSV that correspond to the address components required by the address locator ( street, zip).
+
+3. **Verify Geospatial Data**:
+- 98% matched!
+
+
+
 ## General Data Processing
 
 - All spatial data was reprojected to EPS:2263
