@@ -78,7 +78,51 @@ This project utilizes a variety of datasets sourced from public and governmental
  - Layers to Consider Beyond NYC:
    - Airports: Major airports serving NYC (like JFK, LaGuardia, and Newark Liberty International Airport) are not strictly within NYC’s geographic boundaries but have a significant impact on the city’s economy and transportation dynamics
 
+### Shapefile to SQL Commands
 
+Converts shapefiles to SQL using `shp2pgsql` tool:
+
+```bash
+# Airports
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/AIRPORT/airport.shp" public.airport > airport.sql
+
+# Bus Routes
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/bus/bus_route.shp" public.bus_route > bus_route.sql
+
+# Bus Stops
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/bus/bus_stops.shp" public.bus_stops > bus_stops.sql
+
+# NYC Boundary
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/ny_boundary/ny_boundary.shp" public.ny_boundary > ny_boundary.sql
+
+# Subway Routes
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/subway/subway_route.shp" public.subway_route > subway_route.sql
+
+# Subway Stops
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/subway/subway_stops.shp" public.subway_stops > subway_stop.sql
+
+# Zoning
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/zoning/zoning.shp" public.zoning > zoning.sql
+
+# Property Values
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/propery_val/propery_val.shp" public.propery_val > propery_val.sql
+
+# Demographic Census Tract 
+shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/census_tract_update/census_tract.shp" public.census_tract > census_tract.sql
+```
+
+### Raster to SQL Commands
+
+Converts raster data to SQL using `raster2pgsql` tool:
+
+```bash
+# Land Cover
+raster2pgsql -s 2263 -I -C -M "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/land cover/land.tif" public.land > land_cover.sql
+
+# DEM 
+raster2pgsql -s 2263 -I -C -M "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/dem_update/dem_update.tif" public.dem_update > dem_update.sql
+```
+   
 ## Data Normalization
 
 ### Airport
@@ -104,18 +148,6 @@ ALTER TABLE airport
 ![alt text](pic/airport1.png)
 
 
-### Road
-- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
-  
-```
-ALTER TABLE ny_road
-  DROP COLUMN datemodifi,
-  DROP COLUMN nysstreeti,
--- Include all other columns
-```
-
-### Final road table:
-![alt text](pic/road.png)
 
 
 ### Bus route
