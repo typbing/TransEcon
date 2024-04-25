@@ -66,13 +66,17 @@ This project utilizes a variety of datasets sourced from public and governmental
 
 
 
-## General Data Processing
+## Further processing
+ - All data was reprojected to EPS:2263
 
-- All spatial data was reprojected to EPS:2263
-  
+ - Data 'Subway Route',  'Subway Stops', 'Land Use',  'Property Values ',  'Demographic', 'DEM'  were clipped to New York City
+ 
+ - Clip 'Bus Routes' and 'Bus Stops' to Manhattan
+   - Manhattan has some of the highest traffic densities in New York City, and by concentrating on just this borough, I can more effectively analyze and explore the relationship with economics.
+   
 
-- Data was clipped to New York City
-
+ - Layers to Consider Beyond NYC:
+   - Airports: Major airports serving NYC (like JFK, LaGuardia, and Newark Liberty International Airport) are not strictly within NYC’s geographic boundaries but have a significant impact on the city’s economy and transportation dynamics
 
 
 ## Data Normalization
