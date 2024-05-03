@@ -371,7 +371,7 @@ The raster data was classified into different types based on land cover, which w
 
 For this project, I used the **Polygonise** tool to convert raster data into vector format. This conversion facilitates the spatial analysis of various land cover types and their correlation with socio-economic data.
 
-Check it in QGIS: ![alt text](pic/vect_land.png)
+Check it in QGIS: ![alt text](pic&screenshot/in_QGIS/vect_land.png)
 
 ### Handling Geometric Data Errors
 During the analysis, I encountered issues with self-intersections within the geometric data, which can lead to errors in spatial queries. These issues are manifested in notices such as:
