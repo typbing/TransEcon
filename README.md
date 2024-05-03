@@ -338,13 +338,86 @@ The results showcase the count of various zoning types within a 10 km radius of 
   - Playgrounds (`PLAYGROUND`): 4 occurrences
 
 
+## Analysis of whether transportation infrastructure benefits are equitably distributed across different demographic groups
+
+## 3. Analysis of Tree Canopy Coverage Relative to Income
+
+### Overview
+
+This analysis focuses on exploring the spatial distribution of tree canopy coverage and its correlation with income levels across various regions. 
+
+### Environmental and Socio-Economic Implications
+Tree canopies are vital urban infrastructure that not only beautify the environment but also provide crucial ecological and health benefits. Districts with fewer trees tend to experience higher temperatures, increased pollution, and greater susceptibility to flooding, which can lead to higher rates of heat-related illnesses and mortality. Trees play a critical role in removing pollutants from the air, cooling the urban environment, increasing soil permeability, mitigating flooding, and preventing stormwater runoff and street pollution from contaminating waterways.
+
+According to studies conducted by the Leventhal Center for Advanced Urbanism (LCAU) at MIT, in New York City, neighborhoods with the least tree canopy coverage are often lower-income communities of color. This disparity highlights the need for targeted urban planning initiatives to address and rectify environmental injustices.
+
+
+### Land Cover Classification
+
+The raster data was classified into different types based on land cover, which was then converted to vector format for further analysis. Here is a summary of the land cover classes used:
+
+| Value | Class Name       | Description                     |
+|-------|------------------|---------------------------------|
+| 1     | Water            | Areas covered by water bodies.  |
+| 2     | Trees            | Regions predominantly covered by trees. |
+| 4     | Flooded Vegetation | Areas with vegetation that are seasonally or permanently flooded. |
+| 5     | Crops            | Agricultural areas used for crop production. |
+| 7     | Built Area       | Urban areas with residential, commercial, and other built structures. |
+| 8     | Bare Ground      | Land with little to no vegetation cover, typically bare soil or rocks. |
+| 11    | Rangeland        | Land used for grazing livestock and other range activities. |
+| 0     | Unspecified      | Areas not classified under any specific category. |
+
+### Tools and Methods
+
+For this project, I used the **Polygonise** tool to convert raster data into vector format. This conversion facilitates the spatial analysis of various land cover types and their correlation with socio-economic data.
+
+Check it in QGIS: ![alt text](pic/vect_land.png)
+
+### Handling Geometric Data Errors
+During the analysis, I encountered issues with self-intersections within the geometric data, which can lead to errors in spatial queries. These issues are manifested in notices such as:
+
+```
+NOTICE: Self-intersection at or near point 1024287.9524550693 181171.19658030535
+```
+### Integration of Land Cover with Socio-Economic Data
+A spatial join was performed between the `land_withdemo` vector file, generated from the Polygonise tool, and the median household income data. This approach allowed us to correlate land cover data with income levels, addressing potential errors caused by problematic geometry in the original data. 
+
+The `land_withdemo` table now includes these key columns:
+- **suitable**: Identifies the type of land cover.
+- **b19049_001**: Represents the median household income for the corresponding geographic area.
+
+
+```sql
+SELECT 
+    b19049_001 AS median_income,
+    COUNT(*) AS tree_canopy_count
+FROM 
+    land_withdemo
+WHERE 
+    suitable = '2' -- tree canopies
+GROUP BY 
+    b19049_001
+ORDER BY 
+    tree_canopy_count DESC;
+```
+
+
+### Results 
+| median_income | tree_canopy_count        | 
+|-------|------------------|
+|99458.00000000000    |  52            | 
+|  88558.00000000000     | 23            | 
+| 141250.00000000000     | 19 | 
+| 122321.00000000000 |    17 |
+| 91509.00000000000 | 10 |
+| ... | ... |
 
 
 
 
 
 
-
+---
 # 2. Analysis of  transportation infrastructure are equitably distributed
 
 ## Overview
