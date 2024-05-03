@@ -136,7 +136,7 @@ Using the above code for all the data to remove non-essential fields.
 To simplify the dataset and focus on relevant fields, several non-essential columns were removed from the `bus stops` table. The following SQL command was executed to drop these columns:
 
 ```sql
-ALTER TABLE airport
+ALTER TABLE bus_stops
   DROP COLUMN shape_id,
   DROP COLUMN sequence,
   DROP COLUMN stop_desc;
