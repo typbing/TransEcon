@@ -139,7 +139,8 @@ To simplify the dataset and focus on relevant fields, several non-essential colu
 ALTER TABLE bus_stops
   DROP COLUMN shape_id,
   DROP COLUMN sequence,
-  DROP COLUMN stop_desc;
+  DROP COLUMN stop_desc,
+...;
 ```
 
 
@@ -147,9 +148,85 @@ ALTER TABLE bus_stops
 ![alt text](pic/bus_stop.png)
 
 ### Final bus stops table:
-![alt text](pic/bus_stop1.png)
+![alt text](pic/bus_stops_update.png)
 
 
+## Schema
+### Schema for `bus_stops` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `cross_stre` |
+| `ntaname`    | 
+| `shelter_id` | 
+| `geom`       | 
+
+### Schema for `airport` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `name` 	   | 
+| `geom`       | 
+
+
+### Schema for `subway_route` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `shape_leng` 	   | 
+| `geom`       | 
+
+### Schema for `subway_stops` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `stop_id` 	   | 
+| `stop_name`       | 
+| `geom`       | 
+
+### Schema for `property_value` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `user_fullv` 	   | 
+| `user_stadd`       | 
+| `user_zip`       | 
+| `geom`       | 
+
+### Schema for `zoning` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `zonedist` 	   | 
+| `zone_gen`       | 
+| `geom`       | 
+
+### Schema for `ny_boundary` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `boro_code` 	   | 
+| `boro_name`       | 
+| `shape_area`       | 
+| `shape_leng`       | 
+| `geom`       | 
+
+### Schema for `demographic` Table
+| Column Name  | 
+|--------------|
+| `gid`        | 
+| `objectid` 	   | 
+| `p012_calc_`       | 
+| `p012_calc1`       | 
+| `p012_cal_1`       | 
+| `p012_cal_2`       | 
+| `geom`       | 
+
+### Schema for `land_cover` Table
+| Column Name  | 
+|--------------|
+| `rid`        | 
+| `rast` 	   | 
 
 ---
 # Analysis
