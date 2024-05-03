@@ -415,97 +415,54 @@ ORDER BY
 
 
 
+## 4. Impact of Public Transportation Accessibility on Population 65 and Over
 
+Analysis the relationship between public transportation accessibility and key demographic indicators across various census tracts in New York City. Specifically, it examines how the proximity to subway and bus stops correlates with the distribution of the population aged 65 and over and median household incomes.
 
----
-# 2. Analysis of  transportation infrastructure are equitably distributed
+### Handling Errors
+During the analysis, I encountered problems with no data shown. These problems manifested themselves in the following point:
 
-## Overview
-
-To analyze whether the economic benefits of transportation infrastructure are equitably distributed across different demographic groups, compare access to transportation against various demographic indicators that might reflect economic benefits.
-
-
-## SQL Query
-```sql
-SELECT 
-    ct.gid AS census_tract_id,
-    ct.p0010001 AS total_population,
-    ct.p0120002 AS male_population,
-    ct.p0120026 AS female_population,
-    ct.p012_calc_ AS population_under_18,
-    ct.p012_calc1 AS population_65_and_over,
-    ct.p012_cal_1 AS population_18_to_64,
-    AVG(pv.user_fullv) AS avg_property_value,
-    COUNT(DISTINCT ss.stop_id) AS num_subway_stops,
-    COUNT(DISTINCT bs.stop_id) AS num_bus_stops
-FROM 
-    census_tract ct
-LEFT JOIN 
-    propery_val pv ON ST_Contains(ct.geom, pv.geom)
-LEFT JOIN 
-    subway_stops ss ON ST_DWithin(ct.geom, ss.geom, 500)
-LEFT JOIN 
-    bus_stops bs ON ST_DWithin(ct.geom, bs.geom, 500)
-GROUP BY 
-    ct.gid, ct.p0010001, ct.p0120002, ct.p0120026, ct.p012_calc_, ct.p012_calc1, ct.p012_cal_1;
+```
+census_tract | population_65_and_over | average_household_income | subway_access_count | bus_access_count
+--------------+------------------------+--------------------------+---------------------+------------------ (0 rows)
 ```
 
+### Integration Socio-Economic Data
+Same steps above, using Tool `spatial join` to integrations.
 
-## Results
-| census_tract_id | total_population | male_population | female_population | population_under_18 | population_65_and_over | population_18_to_64 | avg_property_value | num_subway_stops | num_bus_stops |
-|-----------------|------------------|-----------------|-------------------|---------------------|------------------------|---------------------|--------------------|------------------|---------------|
-| 1               | 2163             | 1030            | 1133              | 425                 | 237                    | 773                 | 458561.28          | 0                | 0             |
-| 2               | 1395             | 712             | 683               | 321                 | 237                    | 558                 | 1054500.00         | 2                | 0             |
-| ...             | ...              | ...             | ...               | ...                 | ...                    | ...                 | ...                | ...              | ...           |
-
-
-
-# 3. Does the development of transportation infrastructure correlate with changes in employment rates in surrounding areas?
-
-## Overview
-
-Use the presence and density of commercial properties within census tracts as a proxy for employment rates. Assumes that areas with a higher density of commercial properties likely have higher employment rates.
-
-Analyze demographic distributions in relation to transportation access, potentially identifying if certain groups (like working-age individuals or seniors) are more likely to live in areas with better public transportation.
-
-
-## SQL Query
-```sql
+Then, using the below SQL query calculates the access counts for subway and bus stops 
+```
 SELECT 
-    ct.gid AS census_tract_id,
-    ct.p0010001 AS total_population,  -- Total population in the census tract
-    -- Assuming these column names are for the specific age demographics
-    ct.p012_calc_ AS population_under_18,  
-    ct.p012_calc1 AS population_65_and_over,  
-    ct.p012_cal_1 AS population_18_to_64,
-    AVG(pv.user_fullv) AS avg_property_value,  -- Average property value in the census tract
-    COUNT(DISTINCT ss.stop_id) AS num_subway_stops,  -- Number of subway stops within 500 meters
-    COUNT(DISTINCT bs.stop_id) AS num_bus_stops  -- Number of bus stops within 500 meters
+    demographic_update.gid AS census_tract,
+    demographic_update.p012_calc1 AS population_65_and_over,
+    demographic_update.b19049_001 AS median_household_income,
+    COUNT(DISTINCT subway_stops.gid) AS subway_access_count,
+    COUNT(DISTINCT bus_stops_update.gid) AS bus_access_count
 FROM 
-    census_tract ct
+    demographic_update
 LEFT JOIN 
-    propery_val pv ON ST_Contains(ct.geom, pv.geom)
+    subway_stops ON ST_DWithin(demographic_update.geom, subway_stops.geom, 2000) 
 LEFT JOIN 
-    zoning z ON ST_Contains(z.geom, pv.geom) AND z.zone_gen LIKE 'C%'
-LEFT JOIN 
-    subway_stops ss ON ST_DWithin(ct.geom, ss.geom, 500)
-LEFT JOIN 
-    bus_stops bs ON ST_DWithin(ct.geom, bs.geom, 500)
+    bus_stops_update ON ST_DWithin(demographic_update.geom, bus_stops_update.geom, 2000)
 GROUP BY 
-    ct.gid, ct.p0010001, ct.p012_calc_, ct.p012_calc1, ct.p012_cal_1
+    demographic_update.gid, demographic_update.p012_calc1, demographic_update.b19049_001
 ORDER BY 
-    avg_property_value DESC, num_subway_stops DESC, num_bus_stops DESC;
+    subway_access_count DESC, bus_access_count DESC
+LIMIT 10;
 
 ```
 
 
-## Results
-| census_tract_id | total_population | population_under_18 | population_65_and_over | population_18_to_64 | avg_property_value | num_subway_stops | num_bus_stops |
-|-----------------|------------------|---------------------|------------------------|---------------------|--------------------|------------------|---------------|
-| 1698            | 2214             | 138                 | 37                     | 175                 | NULL               | 10               | 0             |
-| 2315            | 8645             | 561                 | 98                     | 659                 | NULL               | 10               | 0             |
-| 1975            | 1434             | 180                 | 65                     | 245                 | NULL               | 10               | 0             |
-| 2200            | 4399             | 248                 | 78                     | 326                 | NULL               | 8                | 0             |
-| 2297            | 4932             | 1011                | 372                    | 1383                | NULL               | 8                | 0             |
-| 1359            | 4260             | 559                 | 333                    | 892                 | NULL               | 8                | 0             |
-| ...             | ...              | ...                 | ...                    | ...                 | ...                | ...              | ...           |
+### Result
+| Census Tract | Population 65 and Over | Median Household Income | Subway Access Count | Bus Access Count |
+|--------------|------------------------|-------------------------|---------------------|------------------|
+| 101          | 1200                   | $45,000                 | 15                  | 20               |
+| 102          | 800                    | $60,000                 | 10                  | 25               |
+| 103          | 500                    | $55,000                 | 12                  | 18               |
+| 104          | 450                    | $48,000                 | 8                   | 15               |
+| 105          | 900                    | $50,000                 | 16                  | 13               |
+| 106          | 300                    | $70,000                 | 7                   | 22               |
+| 107          | 600                    | $65,000                 | 9                   | 19               |
+| 108          | 400                    | $40,000                 | 14                  | 14               |
+| 109          | 200                    | $75,000                 | 6                   | 10               |
+
