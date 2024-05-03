@@ -21,10 +21,10 @@ This project utilizes a variety of datasets sourced from public and governmental
 |------------------------|---------------------------------------------|-------------|--------------------|------------|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
 | New York Boundaries    | NYC Open Data                               | Vector      | Shapefile          | N/A        | [NYC Open Data - Borough Boundaries](https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)                                                                      | |
 | Subway Lines           | Metropolitan Transportation Authority       | GTFS        | TXT                | N/A        | [MTA Developers](https://new.mta.info/developers)                                                                                         | Includes active subway routes and stops.        |
-| Bus Stops             | Metropolitan Transportation Authority       | Vector        | Shapefile                | N/A        | [NYC Open Data](https://data.cityofnewyork.us/Transportation/Bus-Stop-Shelters/qafz-7myz)                                                                                         | Active bus  stops.          |
+| Bus Stops             | Metropolitan Transportation Authority       | Vector        | Shapefile                | N/A        | [NYC Open Data](https://data.cityofnewyork.us/Transportation/Bus-Stop-Shelters/qafz-7myz)                                                                                         | Active bus stops.          |
 | Airports               | NYC Open Data                               | Vector      | Shapefile          | N/A        | [NYC Open Data - AIRPORT_POLYGON](https://data.cityofnewyork.us/City-Government/AIRPORT_POLYGON/6dic-zdhf/about_data)          | Details of LaGuardia Airport and John F. Kennedy International Airport  |
 | Land Use               | Esri Sentinel-2 Land Cover                  | Raster      | TIF                | 10 m       | [Sentinel-2 Land Cover](https://livingatlas.arcgis.com/landcoverexplorer/#mapCenter=-77.08371%2C26.38100%2C11&mode=step&timeExtent=2017%2C2023&year=2023) |           |
-| Zoning                 | Department of Finance (DOF)                 | Vector      | Shapefile          | N/A        | [NYC Open Data - Zoning Data](https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd)               | Zoning classifications: Residence (R ), Commercial ( C ) and Manufacturing ( M )         |
+| Zoning                 | Department of Finance (DOF)                 | Vector      | Shapefile          | N/A        | [NYC Open Data - Zoning Data](https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd)               |          |
 | Property Values        | Department of Finance (DOF)                 | Vector      | MDB                | N/A        | [NYC Open Data - Property Valuation and Assessment Data](https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data/yjxr-fw8i/about_data) |  |
 | Demographic data            | United States Census Bureau                 | Vector      | Shapefile          | N/A        | [Census Bureau](https://www.census.gov/data/tables/2023/dec/2020-census-dhc.html)                                              |      |
 
@@ -230,73 +230,65 @@ ALTER TABLE bus_stops
 
 ---
 # Analysis
-## 1. Influence of Transportation Access on Property Values
-The SQL query is designed to determine the influence of transportation access on property values by comparing the average property values within a 500-meter radius of subway and bus stops. 
+## 1. Transportation Access Influence
 
-### SQL Query
+###  Overview
+This SQL script calculates the influence of proximity to subway and bus stops on property values. It is divided into two parts, each targeting a different type of public transport. The results from both queries are combined using `UNION ALL`.
 
-The first part calculates the average property value and the total number of properties within 500 meters of subway stops, while the second part does the same for bus stops. 
 
 ```sql
--- Subway access influence
+-- Calculating the influence of subway access
 SELECT 
-    AVG(p.user_fullv) AS avg_property_value,
-    COUNT(*) AS num_properties,
+    AVG(property_value_withzone.user_fullv) AS avg_property_value_withzone, --Calculates the average of property value
+    COUNT(*) AS num_properties, --Counts the total number of properties
     'Subway Access' AS transport_access_type
 FROM 
-    propery_val p
+    property_value_withzone 
 JOIN 
-    subway_stops s ON ST_DWithin(p.geom, s.geom, 500)
+    subway_stops ON ST_DWithin(property_value_withzone.geom, subway_stops.geom, 500) --ST_DWithin is used to ensure that only properties within 500 meters of a subway stop are included
 GROUP BY 
     transport_access_type
-UNION ALL
--- Bus access influence
+UNION  ALL --this operator ensures that all results from both the subway and bus access queries are included in the final output, even if they are duplicates.
+
+-- Calculating the influence of bus access
 SELECT 
-    AVG(p.user_fullv) AS avg_property_value,
+    AVG(property_value_withzone.user_fullv) AS avg_property_value_withzone,
     COUNT(*) AS num_properties,
     'Bus Access' AS transport_access_type
 FROM 
-    propery_val p
+    property_value_withzone
 JOIN 
-    bus_stops b ON ST_DWithin(p.geom, b.geom, 500)
+    bus_stops_update ON ST_DWithin(property_value_withzone.geom, bus_stops_update.geom, 500)
 GROUP BY 
-    transport_access_type;
+    transport_access_type
 ```
-
-### Query Results
-- **Subway Access**:
-  - Average Property Value: $2,898,814.35
-  - Number of Properties: 863,048
-
-- **Bus Access**:
-  - Average Property Value: $2,511,570.85
-  - Number of Properties: 1,205,611
-
-### Analysis
-
-The query results suggest that properties within close proximity to subway stops have a higher average value compared to those near bus stops. 
+###   Results:
+The following table summarizes the results of our analysis on the impact of proximity to public transportation (subway and bus stops) on property values. These results demonstrate the influence of transit access on property valuation within a 500-meter radius:
+| Transport Access Type | Average Property Value | Number of Properties |
+|-----------------------|------------------------|----------------------|
+| Bus Access            | 1,544,947.31           | 277,266              |
+| Subway Access         | 2,898,814.35           | 863,048              |
 
 
-# Analysis of Property Values to Subway Stops
-
-## Overview
-
+## Further analysis
+###  Overview
 Analyze the correlation between property values and their proximity to subway stops. 
-## SQL Query
-
-Calculates the average property value within different distance thresholds from subway stops:
 
 ```sql
-SELECT AVG(p.user_fullv) AS average_property_value
-FROM propery_val p
-JOIN subway_stops s ON ST_DWithin(p.geom, s.geom, <distance>)
-WHERE p.user_fullv IS NOT NULL;
+--Calculates the average property value within different distance thresholds from subway stops:
+
+SELECT 
+    AVG(property_value_withzone.user_fullv) AS avg_property_value_withzone
+FROM 
+    property_value_withzone
+JOIN 
+    subway_stops ON ST_DWithin(property_value_withzone.geom, subway_stops.geom, <distance>)
+WHERE property_value_withzone.user_fullv IS NOT NULL;
 ```
 
 The `<distance>` placeholder is replaced with the specific distance thresholds (500m, 1000m, 1500m, and 2000m) to execute the query multiple times, each time analyzing a different  to subway stops.
 
-## Results
-
+###   Results:
 The average property values at different distances from subway stops are reported as follows:
 
 - **500 meters**: $2,898,814.35
@@ -307,9 +299,49 @@ The average property values at different distances from subway stops are reporte
 These values represent the average property value within the respective distances from subway stops, indicating a trend where proximity appears to correlate with higher property value.
 
 
-## Analysis 
+## 2. Analysis of Zoning Types within a 10 km Radius of Major NYC Airports
+The  query provided examines various zoning areas located within a 10 km radius around New York City's major airports—LaGuardia Airport and John F. Kennedy International Airport.
+This analysis is important for understanding how airport proximity might influence or correlate with different zoning designations such as residential areas, parks, commercial zones, and others.
 
-The analysis suggests a pattern where average property values tend to be higher closer to subway stops. 
+```sql
+SELECT 
+    airport.gid,
+    zoning.zone_gen,
+    COUNT(zoning.zone_gen) AS zone_count --Counts the number of occurrences of each zoning type within the specified radius around each airport.
+
+FROM 
+    airport
+JOIN 
+    zoning ON ST_DWithin(airport.geom, zoning.geom, 10000) -- 10 km
+GROUP BY 
+    airport.gid, zoning.zone_gen
+ORDER BY 
+    airport.gid, zone_count DESC;
+```
+
+### Results
+
+The results showcase the count of various zoning types within a 10 km radius of each airport:
+
+- **LaGuardia Airport (gid 1)**:
+  - Residential Zones (`R`): 173 occurrences
+  - Parks (`PARK`): 67 occurrences
+  - Manufacturing (`M`): 39 occurrences
+  - Commercial (`C`): 30 occurrences
+  - Playgrounds (`PLAYGROUND`): 5 occurrences
+
+- **John F. Kennedy International Airport (gid 2)**:
+  - Residential Zones (`R`): 161 occurrences
+  - Parks (`PARK`): 57 occurrences
+  - Commercial (`C`): 14 occurrences
+  - Manufacturing (`M`): 11 occurrences
+  - Playgrounds (`PLAYGROUND`): 4 occurrences
+
+
+
+
+
+
 
 
 
