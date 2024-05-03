@@ -21,7 +21,7 @@ This project utilizes a variety of datasets sourced from public and governmental
 |------------------------|---------------------------------------------|-------------|--------------------|------------|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
 | New York Boundaries    | NYC Open Data                               | Vector      | Shapefile          | N/A        | [NYC Open Data - Borough Boundaries](https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)                                                                      | |
 | Subway Lines           | Metropolitan Transportation Authority       | GTFS        | TXT                | N/A        | [MTA Developers](https://new.mta.info/developers)                                                                                         | Includes active subway routes and stops.        |
-| Bus Routes             | Metropolitan Transportation Authority       | GTFS        | TXT                | N/A        | [MTA Developers](https://new.mta.info/developers)                                                                                         | Includes active bus routes and stops.          |
+| Bus Stops             | Metropolitan Transportation Authority       | Vector        | Shapefile                | N/A        | [NYC Open Data]([https://new.mta.info/developers](https://data.cityofnewyork.us/Transportation/Bus-Stop-Shelters/qafz-7myz))                                                                                         | Active bus  stops.          |
 | Airports               | NYC Open Data                               | Vector      | Shapefile          | N/A        | [NYC Open Data - AIRPORT_POLYGON](https://data.cityofnewyork.us/City-Government/AIRPORT_POLYGON/6dic-zdhf/about_data)          | Details of LaGuardia Airport and John F. Kennedy International Airport  |
 | Land Use               | Esri Sentinel-2 Land Cover                  | Raster      | TIF                | 10 m       | [Sentinel-2 Land Cover](https://livingatlas.arcgis.com/landcoverexplorer/#mapCenter=-77.08371%2C26.38100%2C11&mode=step&timeExtent=2017%2C2023&year=2023) |           |
 | Zoning                 | Department of Finance (DOF)                 | Vector      | Shapefile          | N/A        | [NYC Open Data - Zoning Data](https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd)               | Zoning classifications: Residence (R ), Commercial ( C ) and Manufacturing ( M )         |
@@ -68,16 +68,12 @@ This project utilizes a variety of datasets sourced from public and governmental
 
 
 ## Further processing
- - All data was reprojected to EPS:2263
+ - All data was reprojected to EPS:2263.
 
- - Data 'Subway Route',  'Subway Stops', 'Land Use',  'Property Values ',  'Demographic', 'DEM'  were clipped to New York City
- 
- - Clip 'Bus Routes' and 'Bus Stops' to Manhattan
-   - Manhattan has some of the highest traffic densities in New York City, and by concentrating on just this borough, I can more effectively analyze and explore the relationship with economics.
-   
+ - All data were clipped to New York City.
 
  - Layers to Consider Beyond NYC:
-   - Airports: Major airports serving NYC (like JFK, LaGuardia, and Newark Liberty International Airport) are not strictly within NYC’s geographic boundaries but have a significant impact on the city’s economy and transportation dynamics
+   - Airports: Major airports serving NYC (like John F. Kennedy International Airport and LaGuardia Airport) are not strictly within NYC’s geographic boundaries but have a significant impact on the city’s economy and transportation dynamics.
 
 ### Shapefile to SQL Commands
 
@@ -86,9 +82,6 @@ Converts shapefiles to SQL using `shp2pgsql` tool:
 ```bash
 # Airports
 shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/AIRPORT/airport.shp" public.airport > airport.sql
-
-# Bus Routes
-shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/bus/bus_route.shp" public.bus_route > bus_route.sql
 
 # Bus Stops
 shp2pgsql -I -s 2263 "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/bus/bus_stops.shp" public.bus_stops > bus_stops.sql
@@ -120,64 +113,35 @@ Converts raster data to SQL using `raster2pgsql` tool:
 # Land Cover
 raster2pgsql -s 2263 -I -C -M "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/land cover/land.tif" public.land > land_cover.sql
 
-# DEM 
-raster2pgsql -s 2263 -I -C -M "/Users/binghui/Desktop/2024 SP/IDCE376 DATABASE/final/dem_update/dem_update.tif" public.dem_update > dem_update.sql
 ```
    
 ## Data Normalization
 
-### Airport
-- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
+-All datas are normalized and no need to edit; however, non-essential fields within the datasets were still need to be removed. 
 
+
+### SQL  for Dropping Columns
+```sql
+ALTER TABLE [table_name]
+  DROP COLUMN [column_name1],
+  DROP COLUMN [column_name2],
+  ...;
 ```
+
+Using the above code for all the data to remove non-essential fields.
+
+
+### Example of Cleaning the Bus Stops  Table
+
+To simplify the dataset and focus on relevant fields, several non-essential columns were removed from the `bus stops` table. The following SQL command was executed to drop these columns:
+
+```sql
 ALTER TABLE airport
-  DROP COLUMN operatorty,
-  DROP COLUMN emergency,
-  DROP COLUMN addrfull,
-  DROP COLUMN capacitype,
-  DROP COLUMN addrcity,
-  DROP COLUMN osm_id,
-  DROP COLUMN source,
-  DROP COLUMN building,
-  DROP COLUMN emergencyh;
-```
-
-### Initial airport table:
-![alt text](pic/airport.png)
-
-### Final airport table:
-![alt text](pic/airport1.png)
-
-
-
-
-### Bus route
-
-- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
-```
-ALTER TABLE bus_route
-
-  DROP COLUMN shape_leng,
-  DROP COLUMN shape_id;
-```
-
-### Initial bus route table:
-![alt text](pic/bus_route.png)
-
-
-### Final bus route table:
-![alt text](pic/busroute1.png)
-
-### Bus stops
-- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
-
-```
-ALTER TABLE bus_stops
   DROP COLUMN shape_id,
   DROP COLUMN sequence,
-  DROP COLUMN stop_id,
--- Include all other columns
+  DROP COLUMN stop_desc;
 ```
+
 
 ### Initial bus stop table:
 ![alt text](pic/bus_stop.png)
@@ -185,28 +149,9 @@ ALTER TABLE bus_stops
 ### Final bus stops table:
 ![alt text](pic/bus_stop1.png)
 
-### Subway route
-- Imported into database, non-essential fields were dropped using the following queries in pgAdmin :
-```
-ALTER TABLE subway_route
-
-  DROP COLUMN shape_id,
--- Include all other columns
-```
-
-### Initial Subway route table:
-![alt text](pic/subway_route.png)
-
-### Final Subway route table:
-![alt text](pic/subway_route1.png)
-
-### Subway stops (same steps above )
-
-### Final Subway stops table:
-![alt text](pic/subway_stop1.png)
 
 
---
+---
 # Analysis
 ## 1. Influence of Transportation Access on Property Values
 The SQL query is designed to determine the influence of transportation access on property values by comparing the average property values within a 500-meter radius of subway and bus stops. 
