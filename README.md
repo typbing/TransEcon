@@ -466,3 +466,6 @@ LIMIT 10;
 | 108          | 400                    | $40,000                 | 14                  | 14               |
 | 109          | 200                    | $75,000                 | 6                   | 10               |
 
+
+## Conclusion
+It analysis that proximity to transportation hubs increases property values, especially near subway stations. Properties within 500 meters of a subway station have the highest average value of $2,898,814.35, and this decreases when the distance increases to 2,000 meters. While transit hubs also increase property values, the impact is not as pronounced as subway hubs. In addition, an analysis of land use around LaGuardia and John F. Kennedy International Airports shows that there are more residential and park areas near LaGuardia Airport, while there are fewer commercial and manufacturing areas near JFK Airport, reflecting the different urban planning and use of areas around major transportation hubs.
