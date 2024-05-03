@@ -145,10 +145,10 @@ ALTER TABLE bus_stops
 
 
 ### Initial bus stop table:
-![alt text](pic/bus_stop.png)
+![alt text](pic&screenshot/in_pgAdmin/bus_stop.png)
 
 ### Final bus stops table:
-![alt text](pic/bus_stops_update.png)
+![alt text](pic&screenshot/in_pgAdmin/bus_stops_update.png)
 
 
 ## Schema
